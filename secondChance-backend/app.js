@@ -1,5 +1,6 @@
 /*jshint esversion: 8 */
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const pinoLogger = require('./logger');
@@ -7,6 +8,7 @@ const pinoLogger = require('./logger');
 const connectToDatabase = require('./models/db');
 const {loadData} = require("./util/import-mongo/index");
 
+const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
 
 const app = express();
 app.use("*",cors());
@@ -18,8 +20,9 @@ connectToDatabase().then(() => {
 })
     .catch((e) => console.error('Failed to connect to DB', e));
 
-
 app.use(express.json());
+
+app.use('/api/secondchance/items', secondChanceItemsRoutes);
 
 // Route files
 
