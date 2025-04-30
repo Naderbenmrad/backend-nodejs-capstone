@@ -10,6 +10,8 @@ const {loadData} = require("./util/import-mongo/index");
 
 const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
 
+const searchRoutes = require('./routes/searchRoutes');
+
 const app = express();
 app.use("*",cors());
 const port = 3060;
@@ -23,6 +25,8 @@ connectToDatabase().then(() => {
 app.use(express.json());
 
 app.use('/api/secondchance/items', secondChanceItemsRoutes);
+
+app.use('/api/secondchance/search', searchRoutes);
 
 // Route files
 

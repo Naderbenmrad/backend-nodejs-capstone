@@ -70,18 +70,19 @@ router.post('/', upload.single('file'), async(req, res,next) => {
 // Get a single secondChanceItem by ID
 router.get('/:id', async (req, res, next) => {
     try {
-        //Step 4: task 1 
+        //Step 4: task 1
         const db = await connectToDatabase();
-        //Step 4: task 2 
+        //Step 4: task 2
         const collection = db.collection("secondChanceItems");
-        //Step 4: task 3 
-        const secondChanceItem = await collection.findOne({ id: id });
-        //Step 4: task 4 
+        // Step 4: task 3
+        const itemId = req.params.id; 
+        const secondChanceItem = await collection.findOne({ id: itemId });
+        //Step 4: task 4
         if (!secondChanceItem) {
             return res.status(404).send("secondChanceItem not found");
-          }
-          
-          res.json(secondChanceItem);
+        }
+
+        res.json(secondChanceItem);
     } catch (e) {
         next(e);
     }
@@ -95,22 +96,23 @@ router.put('/:id', async(req, res,next) => {
         //Step 5: task 2
         const collection = db.collection("secondChanceItems");
         //Step 5: task 3
-        const secondChanceItem = await collection.findOne({ id });
-        if (!secondChanceItem) {
+        const itemId = req.params.id;
+        const secondChanceItemToUpdate = await collection.findOne({ id: itemId });
+        if (!secondChanceItemToUpdate) {
         logger.error('secondChanceItem not found');
         return res.status(404).json({ error: "secondChanceItem not found" });
         }
         //Step 5: task 4
-        secondChanceItem.category = req.body.category;
-        secondChanceItem.condition = req.body.condition;
-        secondChanceItem.age_days = req.body.age_days;
-        secondChanceItem.description = req.body.description;
-        secondChanceItem.age_years = Number((secondChanceItem.age_days/365).toFixed(1));
-        secondChanceItem.updatedAt = new Date();
+        secondChanceItemToUpdate.category = req.body.category;
+        secondChanceItemToUpdate.condition = req.body.condition;
+        secondChanceItemToUpdate.age_days = req.body.age_days;
+        secondChanceItemToUpdate.description = req.body.description;
+        secondChanceItemToUpdate.age_years = Number((secondChanceItemToUpdate.age_days/365).toFixed(1));
+        secondChanceItemToUpdate.updatedAt = new Date();
 
         const updatepreloveItem = await collection.findOneAndUpdate(
-            { id },
-            { $set: secondChanceItem },
+            { id: itemId }, // Use itemId here
+            { $set: secondChanceItemToUpdate },
             { returnDocument: 'after' }
         );
         //Step 5: task 5
@@ -127,18 +129,19 @@ router.put('/:id', async(req, res,next) => {
 // Delete an existing item
 router.delete('/:id', async(req, res,next) => {
     try {
-        //Step 6: task 1 
+        //Step 6: task 1
         const db = await connectToDatabase();
-        //Step 6: task 2 
+        //Step 6: task 2
         const collection = db.collection("secondChanceItems");
         //Step 6: task 3
-        const secondChanceItem = await collection.findOne({ id });
-        if (!secondChanceItem) {
+        const itemId = req.params.id;
+        const secondChanceItemToDelete = await collection.findOne({ id: itemId });
+        if (!secondChanceItemToDelete) {
         logger.error('secondChanceItem not found');
         return res.status(404).json({ error: "secondChanceItem not found" });
-        } 
+        }
         //Step 6: task 4
-        await collection.deleteOne({ id });
+        await collection.deleteOne({ id: itemId }); // Use itemId here
         res.json({"deleted":"success"});
     } catch (e) {
         next(e);
